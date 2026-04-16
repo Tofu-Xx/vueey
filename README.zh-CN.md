@@ -33,16 +33,3 @@ interface Options {
 - [tem_drill](./examples/tem_drill.html)
 - [lifecycle_drill](./examples/lifecycle_drill.html)
 
-### ⌨️ 精彩 的 源码
-- [vue.js](./vue.js)
-- [vue.min.js](./vue.min.js) *已压缩*
-
-### 🩻 魔鬼 的 版本 
-
-**游戏规则：**
-**`{`** 和 **`;`** 后必须换行，**`}`** 前必须换行，除非他们在正则表达式中。   
-目标是使用尽可能少行数。
-<a href="./LearnMore.zh-CN.md">了解更多</a>
-
-- [vue.devil.js](./vue.devil.js)
-- [vue.undevil.js](./vue.undevil.js) *已展开*
