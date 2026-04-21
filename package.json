@@ -1,43 +1,70 @@
 {
-	"name": "vueey",
-	"type": "module",
-	"version": "0.0.4-beta.1",
-	"description": "🤓 50 lines of code write Vue.js | 50行代码敲出Vue.js",
-	"author": "tofu-xx <tofu-xx@foxmail.com>",
-	"license": "MIT",
-	"funding": "https://github.com/sponsors/tofu-xx",
-	"homepage": "https://github.com/tofu-xx/vueey#readme",
-	"repository": {
-		"type": "git",
-		"url": "git+https://github.com/tofu-xx/vueey.git"
-	},
-	"bugs": "https://github.com/tofu-xx/vueey/issues",
-	"keywords": [
-		"vue",
-		"minify",
-		"minimal"
-	],
-	"main": "./vue.min.js",
-	"files": [
-		"*.js"
-	],
-	"scripts": {
-		"release": "bumpp -no-push && pnpm publish",
-		"up": "taze major -I",
-		"build": "swc vue.js -o vue.min.js"
-	},
-	"devDependencies": {
-		"@swc/cli": "^0.5.1",
-		"@swc/core": "^1.9.3",
-		"bumpp": "^9.8.1",
-		"taze": "^0.18.0"
-	},
-	"publishConfig": {
-		"registry": "https://registry.npmjs.org/",
-		"access": "public"
-	},
-	"packageManager": "pnpm@9.14.4",
-	"dependencies": {
-		"up": "^1.0.2"
-	}
+  "name": "vueey",
+  "type": "module",
+  "version": "0.0.4-beta.1",
+  "packageManager": "pnpm@10.33.0",
+  "description": "🤓 50 lines of code write Vue.js | 50行代码敲出Vue.js",
+  "author": "tofu-xx <tofu-xx@foxmail.com>",
+  "license": "MIT",
+  "funding": "https://github.com/sponsors/tofu-xx",
+  "homepage": "https://github.com/tofu-xx/vueey#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/tofu-xx/vueey.git"
+  },
+  "bugs": "https://github.com/tofu-xx/vueey/issues",
+  "keywords": [
+    "vue",
+    "minify",
+    "minimal"
+  ],
+  "exports": {
+    ".": {
+      "types": "./dist/main.d.ts",
+      "import": "./dist/main.es.js",
+      "require": "./dist/main.umd.js"
+    }
+  },
+  "main": "./dist/main.umd.js",
+  "module": "./dist/main.es.js",
+  "types": "./dist/main.d.ts",
+  "typesVersions": {
+    "*": {
+      "*": [
+        "./dist/*",
+        "./dist/main.d.ts"
+      ]
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "start": "esno src/main.ts",
+    "build": "vite build",
+    "watch": "vite build --watch",
+    "release": "bumpp -no-push && nr build && pnpm publish",
+    "up": "taze major -I",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
+    "old-build": "swc vue.js -o vue.min.js"
+  },
+  "devDependencies": {
+    "@antfu/eslint-config": "^3.9.1",
+    "@antfu/ni": "^0.23.0",
+    "@types/node": "^22.9.0",
+    "bumpp": "^9.8.1",
+    "eslint": "^9.14.0",
+    "eslint-plugin-format": "^0.1.2",
+    "esno": "^4.8.0",
+    "taze": "^0.18.0",
+    "tsc": "^2.0.4",
+    "typescript": "^5.6.3",
+    "vite": "^8.0.9",
+    "vite-plugin-dts": "^4.5.4"
+  },
+  "publishConfig": {
+    "registry": "https://registry.npmjs.org/",
+    "access": "public"
+  }
 }

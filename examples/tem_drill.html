@@ -14,7 +14,7 @@ The writing and effects shown below are the same as the official ones. <br>
     <!-- {{ }} -->
     <h1>hello {{ name }}</h1>
     <p>
-      {{ count }} * 2 = {{ 
+      {{ count }} * 2 = {{
         count * 2
       }}
     </p>
@@ -28,7 +28,7 @@ The writing and effects shown below are the same as the official ones. <br>
     <input :value="name" @input="ipt">
     <input :placeholder="getPh()" @change="
       const val = $event.target.value
-      const cont = $refs.changeTo 
+      const cont = $refs.changeTo
       cont.textContent = 'change to: ' + val
     ">
     <input :value="'Vue' + 'ey'" @keyup="$refs.showKey.value = $event.key">
