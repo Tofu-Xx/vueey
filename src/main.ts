@@ -1,17 +1,17 @@
 interface Opt {
   el?: keyof HTMLElementTagNameMap
-  methods?: () => any
-  data?: any
-  watch?: Record<string, (...args: any[]) => any>
-  created?: () => any
-  updated?: () => any
-  mounted?: () => any
+  data?: Obj
+  methods?: Record<PropertyKey, Fn>
+  watch?: Record<PropertyKey, (val: unknown, oldVal: unknown) => void>
+  created?: Fn
+  mounted?: Fn
+  updated?: Fn
 }
-export default function Vue(opt: Opt = {}) {
-  let _active: () => void
-  const _deps: any = {}
-  const $refs = {}
-  const $el = opt.el ? document.querySelector(opt.el) : document
+export default function Vue(this: any, opt: Opt = {}) {
+  let _active: Fn
+  const _deps: Record<PropertyKey, Set<Fn>> = {}
+  const $refs: Obj<Element> = {}
+  const $el = document.querySelector(opt.el ?? 'body') ?? document.body
   const This = Object.assign(new Proxy({ $el, $refs }, {
     get: (...args) => {
       _deps[args[1]] ??= new Set()
@@ -20,7 +20,7 @@ export default function Vue(opt: Opt = {}) {
     },
     set: (...args) => {
       queueMicrotask(() => {
-        _deps[args[1]]?.forEach((f: () => any) =>
+        _deps[args[1]]?.forEach(f =>
           f?.(),
         )
       },
@@ -28,31 +28,39 @@ export default function Vue(opt: Opt = {}) {
       return Reflect.set(...args)
     },
   }), opt.methods, opt.data)
+
   let thisState = JSON.stringify(This)
   const thisKeyRex = new RegExp(Object.keys(This).map(k => `(?<![\\w$])${k}(?![\\w$])`).join('|').replace(/\$/g, '\\$'), 'g')
   const infuse = (raw: string, preCode = 'return ') => new Function('$event', preCode + raw.trim().replace(thisKeyRex, k => `this.${k}`)).bind(This)
-  const effect = (fn: () => void) => {
+  const effect = (fn: Fn) => {
     _active = fn
     return fn()
   }
-  const compiler = (node: any, walker = document.createTreeWalker(node)) => {
-    const { nodeType, data: tem } = node
-    if (nodeType === Node.ELEMENT_NODE) {
-      for (const { name, value: raw } of node.attributes) {
-        const bindName = name.slice(1)
-        if (name[0] === '@')
-          node.addEventListener(bindName, /[^\s\w$]/.test(raw) ? infuse(raw, '') : This[raw.trim()]?.bind(This))
-        if (name[0] === ':')
-          effect(() => node.setAttribute(bindName, node[bindName] = infuse(raw)()))
-        if (name === 'ref')
-          This.$refs[raw] = node
+  const compiler = (node: Node, walker = document.createTreeWalker(node)) => {
+    if (node instanceof Element) {
+      for (const { name, value } of node.attributes) {
+        if (name === 'ref') {
+          This.$refs[value] = node
+        }
+        else {
+          const bindName = name.slice(1)
+          if (name[0] === '@') {
+            node.addEventListener(bindName, /[^\s\w$]/.test(value) ? infuse(value, '') : This[value.trim()]?.bind(This))
+          }
+          if (name[0] === ':') {
+            effect(() => node.setAttribute(bindName, /* node[bindName] =  */infuse(value)()))
+          }
+        }
       }
     }
-    if (nodeType === Node.TEXT_NODE)
+    if (node instanceof Text) {
+      const tem = node.data
       effect(() => node.data = tem.replace(/\{\{(.*?)\}\}/gs, (_: unknown, raw: string) => infuse(raw)()))
+    }
     if (walker.nextNode())
       compiler(walker.currentNode, walker)
   }
+
   for (const [key, fn] of Object.entries(opt.watch ?? {})) {
     let oldVal = This[key]
     _deps[key].add(() => {
@@ -63,6 +71,7 @@ export default function Vue(opt: Opt = {}) {
       oldVal = val
     })
   }
+
   opt.created?.call(This)
   compiler($el)
   queueMicrotask(() => {
@@ -78,4 +87,5 @@ export default function Vue(opt: Opt = {}) {
     }
   })
   opt.mounted?.call(This)
+  effect(() => Object.assign(this, This))
 };

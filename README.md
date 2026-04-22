@@ -5,11 +5,12 @@
 </p>
 
 This project will restore as many Vue core functions as possible.
-And try to keep the packaged code volume within **1024** bytes.
+And try to keep the size of the packaged code around **1024** bytes
 
 ### 🎉 Achieved Property
 
 ```ts
+/* eslint-disable ts/no-unsafe-function-type */
 interface Options {
   el?: string
   data?: object

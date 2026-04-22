@@ -5,11 +5,12 @@
 </p>
 
 本项目将尽可能多还原出Vue核心功能，
-并尽量保持打包后的代码体积在 **1024** 字节以内。
+并尽量保持打包后的代码体积在 **1024** 字节左右。
 
 ### 🎉 已有 的 功能
 
 ```ts
+/* eslint-disable ts/no-unsafe-function-type */
 interface Options {
   el?: string
   data?: object
